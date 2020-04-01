@@ -1,26 +1,41 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { Fragment, useState, useEffect } from 'react';
+import Header from './Components/Header';
+import Formulario from './Components/Formulario';
+import ListadoNoticias from './Components/ListadoNoticias';
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+	//Definir la categoria y noticias
+	const [categoria, guardarCategoria] = useState('');
+	const [noticas, guardarNoticias] = useState([]);
+
+	useEffect(() => {
+		const consultarAPI = async () => {
+			const url = `https://newsapi.org/v2/top-headlines?country=mx&category=${categoria}&apiKey=7cffea83743b4b0ca354878f1b69161c`;
+
+			const respuesta = await fetch(url);
+			const noticias = await respuesta.json();
+
+			guardarNoticias(noticias.articles);
+		}
+		consultarAPI();
+	}, [categoria])
+	return (
+		<Fragment>
+			<Header
+				titulo="Buscador de noticias"
+			/>
+
+			<div className="container white">
+				<Formulario
+					guardarCategoria={guardarCategoria}
+				/>
+			</div>
+
+			<ListadoNoticias
+				noticias={noticas}
+			/>
+		</Fragment>
+	);
 }
 
 export default App;
